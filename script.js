@@ -3,7 +3,7 @@ const SUPABASE_URL = 'https://xsetrmgmynmrebiwkkya.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzZXRybWdteW5tcmViaXdra3lhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIyMDQyOTEsImV4cCI6MjA3Nzc4MDI5MX0.DFs9aID-cp693Ow5cwE-GF9cGLtIZQ761z2cCp8dlxw';
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// 🧠 Perguntas de exemplo (adicione quantas quiser)
+// 🧠 Perguntas (exemplo)
 const perguntas = [
   {
     pergunta: "Quanto é 5 + 3?",
@@ -40,6 +40,7 @@ let jogador = '';
 let pontuacao = 0;
 let questoesSelecionadas = [];
 let indiceQuestao = 0;
+let tentativa = 1; // 1 = primeira tentativa, 2 = segunda tentativa
 
 // 🎯 Elementos
 const telas = document.querySelectorAll('.tela');
@@ -73,10 +74,10 @@ function iniciarJogo() {
 
   pontuacao = 0;
   indiceQuestao = 0;
+  tentativa = 1;
   nomeExibir.textContent = jogador;
   pontuacaoEl.textContent = pontuacao;
 
-  // Seleciona 10 perguntas aleatórias (ou todas, se houver menos)
   questoesSelecionadas = [...perguntas].sort(() => Math.random() - 0.5).slice(0, 10);
 
   mostrarTela('tela-jogo');
@@ -90,9 +91,19 @@ function carregarQuestao() {
   numQuestaoEl.textContent = indiceQuestao + 1;
   perguntaEl.textContent = q.pergunta;
   dicaEl.textContent = '';
+  tentativa = 1;
 
+  renderizarAlternativas(q);
+}
+
+function renderizarAlternativas(q) {
   alternativasEl.innerHTML = '';
-  for (let [letra, texto] of Object.entries(q.alternativas)) {
+
+  // Se for a segunda tentativa, embaralha as alternativas
+  let alternativas = Object.entries(q.alternativas);
+  if (tentativa === 2) alternativas.reverse(); // simples inversão (pode usar sort(() => Math.random() - 0.5) se quiser aleatório)
+
+  for (let [letra, texto] of alternativas) {
     const btn = document.createElement('button');
     btn.textContent = texto;
     btn.onclick = () => verificarResposta(letra, q);
@@ -102,16 +113,38 @@ function carregarQuestao() {
 
 function verificarResposta(letra, q) {
   if (letra === q.correta) {
-    pontuacao += q.pontos;
+    let pontosGanho = tentativa === 1 ? q.pontos : Math.floor(q.pontos / 2);
+    pontuacao += pontosGanho;
     pontuacaoEl.textContent = pontuacao;
-  } else {
-    dicaEl.textContent = `💡 Dica: ${q.dica}`;
-  }
 
-  setTimeout(() => {
-    indiceQuestao++;
-    carregarQuestao();
-  }, 1000);
+    dicaEl.textContent = tentativa === 1
+      ? "✅ Resposta correta!"
+      : `✅ Acertou na segunda tentativa! (+${pontosGanho} pontos)`;
+
+    setTimeout(() => {
+      indiceQuestao++;
+      carregarQuestao();
+    }, 1500);
+
+  } else {
+    if (tentativa === 1) {
+      // Mostra dica e permite tentar novamente
+      dicaEl.textContent = `❌ Errado! 💡 Dica: ${q.dica}`;
+      tentativa = 2;
+
+      // Mantém a dica por mais tempo (3 segundos)
+      setTimeout(() => {
+        renderizarAlternativas(q);
+      }, 3000);
+    } else {
+      // Errou de novo — passa pra próxima
+      dicaEl.textContent = "❌ Errou novamente! Vamos pra próxima.";
+      setTimeout(() => {
+        indiceQuestao++;
+        carregarQuestao();
+      }, 2000);
+    }
+  }
 }
 
 async function finalizarJogo() {
