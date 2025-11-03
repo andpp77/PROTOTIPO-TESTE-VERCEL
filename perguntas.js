@@ -1,4 +1,3 @@
-
 const perguntas = [
   {
     "id": 1,
