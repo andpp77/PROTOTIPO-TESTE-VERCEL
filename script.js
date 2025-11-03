@@ -6,7 +6,7 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
 
 // 🎯 Lista de perguntas (use a sua completa aqui)
-import { perguntas } from './perguntas.js' // ou cole direto no arquivo se preferir
+import { perguntas } from './perguntas' // ou cole direto no arquivo se preferir
 
 // 🧠 Variáveis globais
 let jogador = ''
