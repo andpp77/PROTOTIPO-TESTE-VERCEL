@@ -1,8 +1,8 @@
 import { createClient } from '@supabase/supabase-js'
 
 // 🔗 Conexão com Supabase (substitua com as suas credenciais)
-const SUPABASE_URL = 'https://SEU_PROJECT.supabase.co'
-const SUPABASE_KEY = 'SEU_API_KEY'
+const SUPABASE_URL = 'https://xsetrmgmynmrebiwkkya.supabase.co'
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzZXRybWdteW5tcmViaXdra3lhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIyMDQyOTEsImV4cCI6MjA3Nzc4MDI5MX0.DFs9aID-cp693Ow5cwE-GF9cGLtIZQ761z2cCp8dlxw'
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
 
 // 🎯 Lista de perguntas (use a sua completa aqui)
